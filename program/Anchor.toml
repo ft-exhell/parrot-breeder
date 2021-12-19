@@ -1,11 +1,11 @@
-[programs.localnet]
-myepicproject = "4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV"
+[programs.devnet]
+myepicproject = "G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/toha-kartoha/Desktop/solana-test-keypair.json"
 
 [scripts]

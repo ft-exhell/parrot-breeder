@@ -1,0 +1,9 @@
+Streaming transaction logs mentioning G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2. Confirmed commitment
+Transaction executed in slot 101971633:
+  Signature: 4pKLwPbskG1CwohGxCFA6cWn43QAk1Qq5UFRvuFca3Y3kfQXSmokL9kRYvmjE7ZczAXv2gXQ967yNfZUEk7sWSg3
+  Status: Ok
+  Log Messages:
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 invoke [1]
+    Program log: Instruction: AddGif
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 3645 of 200000 compute units
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 success
