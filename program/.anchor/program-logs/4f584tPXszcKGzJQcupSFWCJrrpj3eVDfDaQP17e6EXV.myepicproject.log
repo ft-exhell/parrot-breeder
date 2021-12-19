@@ -1,0 +1,19 @@
+Streaming transaction logs mentioning 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV. Confirmed commitment
+Transaction executed in slot 1:
+  Signature: 2DWv4VVhdkcLTNvHbabbA6UnS8BckNnmtg1eV6iN1EKVnqzpy56ucHGf9nuSr23SA9kmmewajDZL6ubKFp2UkjFi
+  Status: Ok
+  Log Messages:
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV invoke [1]
+    Program log: Instruction: StartStuffOff
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV consumed 9871 of 200000 compute units
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV success
+Transaction executed in slot 2:
+  Signature: 29LogPbD6jwEzPjEsCUXSjJZYtXB7xaTB8KU684Uwwknw1JQbcuRgytq2g4ek8jf9g3sx2YLt6ucZ8X6qwjt2iKM
+  Status: Ok
+  Log Messages:
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV invoke [1]
+    Program log: Instruction: AddGif
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV consumed 3645 of 200000 compute units
+    Program 4f584tPXszcKGzJQcupSFWCJrrpj3eVDfDaQP17e6EXV success

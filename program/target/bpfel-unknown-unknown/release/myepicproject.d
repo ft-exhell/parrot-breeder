@@ -1,1 +1,1 @@
-/Users/toha-kartoha/Desktop/myepicproject/target/bpfel-unknown-unknown/release/myepicproject.so: /Users/toha-kartoha/Desktop/myepicproject/programs/myepicproject/src/lib.rs
+/Users/toha-kartoha/Desktop/parrot-breeder/program/target/bpfel-unknown-unknown/release/myepicproject.so: /Users/toha-kartoha/Desktop/parrot-breeder/program/programs/myepicproject/src/lib.rs
