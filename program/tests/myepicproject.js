@@ -37,6 +37,27 @@ const main = async () => {
   console.log(`GIF count: ${account.totalGifs.toString()}`);
 
   console.log('GIF List: ', account.gifList)
+  
+  console.log('GIF 0 votes', account.gifList[0].votes)
+
+  await program.rpc.updateGif("https://media.giphy.com/media/qtyUiCUuk0Sgh2YwdL/giphy.gif", {
+    accounts: {
+      baseAccount: baseAccount.publicKey
+    }
+  })
+
+  account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+  console.log('GIF 0 votes', account.gifList[0].votes)
+
+  const tipReceiver = "Ft9Enm484R3Yy4mzxgAfPxkYcEanCkbTtReqEPnQedDH";
+
+  await program.rpc.sendTip(new anchor.BN(10000000), {
+    accounts: {
+      from: provider.wallet.publicKey,
+      to: tipReceiver,
+      systemProgram: SystemProgram.programId
+    }
+  })
 }
 
 const runMain = async () => {

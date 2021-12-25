@@ -43,6 +43,48 @@ export type Myepicproject = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "updateGif",
+      "accounts": [
+        {
+          "name": "baseAccount",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "gifLink",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "sendTip",
+      "accounts": [
+        {
+          "name": "from",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "to",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -80,6 +122,10 @@ export type Myepicproject = {
           {
             "name": "user",
             "type": "publicKey"
+          },
+          {
+            "name": "votes",
+            "type": "u64"
           }
         ]
       }
@@ -132,6 +178,48 @@ export const IDL: Myepicproject = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "updateGif",
+      "accounts": [
+        {
+          "name": "baseAccount",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "gifLink",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "sendTip",
+      "accounts": [
+        {
+          "name": "from",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "to",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -169,6 +257,10 @@ export const IDL: Myepicproject = {
           {
             "name": "user",
             "type": "publicKey"
+          },
+          {
+            "name": "votes",
+            "type": "u64"
           }
         ]
       }

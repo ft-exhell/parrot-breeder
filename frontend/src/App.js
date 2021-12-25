@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
-import { Program, Provider, web3 } from '@project-serum/anchor';
+import { Program, Provider, web3, BN } from '@project-serum/anchor';
 
 import idl from './idl.json';
 import kp from './keypair.json';
@@ -39,6 +39,7 @@ const App = () => {
   // State
   const [walletAddress, setWalletAddress] = useState(null);
   const [inputValue, setInputValue] = useState('');
+  const [tipSize, setTipSize] = useState('');
   const [gifList, setGifList] = useState([]);
 
   // Check if Phantom is connected
@@ -104,9 +105,53 @@ const App = () => {
     }
   }
 
+  const vote = (giflink) => async (event) => {
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
+
+      await program.rpc.updateGif(giflink, {
+        accounts: {
+          baseAccount: baseAccount.publicKey
+        }
+      })
+    } catch (err) {
+      console.log('Error upvoting', err)
+    }
+  }
+
+  const tip = async (item) => {
+    if (tipSize == 0) {
+      console.log('Amount not specified');
+      return
+    }
+    setTipSize('');
+    try {
+      const provider = getProvider();
+      const program = new Program(idl, programID, provider);
+      const to = item.user.toString()
+
+      await program.rpc.sendTip(new BN(parseInt(tipSize)), {
+        accounts: {
+          from: provider.wallet.publicKey,
+          to,
+          systemProgram: SystemProgram.programId
+        }
+      })
+      console.log('Successfully tipped', to)
+    } catch (err) {
+      console.log('Error tipping', err)
+    }
+  }
+
   const onInputChange = (event) => {
     const { value } = event.target;
     setInputValue(value);
+  }
+
+  const onTipChange = (event) => {
+    const { value } = event.target;
+    setTipSize(value);
   }
 
   const getProvider = () => {
@@ -192,7 +237,24 @@ const App = () => {
         <div className='gif-grid'>
           {gifList.map((item, index) => (
             <div className='gif-item' key={index}>
-            <img src={item.gifLink} />
+              <img src={item.gifLink} />
+              <span style={{color:"white"}}>Uploader: {item.user.toString()}</span>
+              <span style={{color:"white"}}>Votes: {item.votes.toString()}</span>
+              <button onClick={vote(item.gifLink.toString())}>Vote</button>
+              <form
+                onSubmit={event => {
+                  event.preventDefault();
+                  tip(item);
+                }}
+              >
+                <input 
+                  type="text" 
+                  placeholder="Lamports to tip" 
+                  value={tipSize}
+                  onChange={onTipChange}
+                />
+                <button type="submit" className="cta-button submit-gif-button">Tip</button>
+              </form>
             </div>
           ))}
         </div>

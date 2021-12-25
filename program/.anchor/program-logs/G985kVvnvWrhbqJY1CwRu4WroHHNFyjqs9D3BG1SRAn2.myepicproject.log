@@ -1,9 +1,37 @@
 Streaming transaction logs mentioning G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2. Confirmed commitment
-Transaction executed in slot 101971633:
-  Signature: 4pKLwPbskG1CwohGxCFA6cWn43QAk1Qq5UFRvuFca3Y3kfQXSmokL9kRYvmjE7ZczAXv2gXQ967yNfZUEk7sWSg3
+Transaction executed in slot 103345961:
+  Signature: QDXT1EWhptWABEdmkrr1m8Ky7D1kQszr7C8tdkCWWacqGLTAe1SCmoWJHTgQnqrxpoR1vNdYR5Er7TCsJFDcHxY
+  Status: Ok
+  Log Messages:
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 invoke [1]
+    Program log: Instruction: StartStuffOff
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 9884 of 200000 compute units
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 success
+Transaction executed in slot 103345965:
+  Signature: 23ud8JYbTyyRXNDPaZ7UjtoFdz2Jp6dExGRRBH6jNUNRiRaB3LX2ANWqsaWHXmAgfsLAzgH1YHCmQ4ZR24D65Su6
   Status: Ok
   Log Messages:
     Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 invoke [1]
     Program log: Instruction: AddGif
-    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 3645 of 200000 compute units
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 3774 of 200000 compute units
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 success
+Transaction executed in slot 103345970:
+  Signature: 3umhKUie72pWuCC7xvj4PckmTj5qCmBxaAdgait9u5kaBKkcFjyTBeWfVtFtAd3hkbWgEJpCxkwHacBcGXKJCfCh
+  Status: Ok
+  Log Messages:
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 invoke [1]
+    Program log: Instruction: UpdateGif
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 3832 of 200000 compute units
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 success
+Transaction executed in slot 103345974:
+  Signature: 5HwQCsDFTnfqt6drMPA7Mi8E82vdjAQCKKJmXB8pUykuz4HKkyUPt9ePuRbq7qxfqLLhZ6jM72ZLzwM1q6z9mMJQ
+  Status: Ok
+  Log Messages:
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 invoke [1]
+    Program log: Instruction: SendTip
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 consumed 4516 of 200000 compute units
     Program G985kVvnvWrhbqJY1CwRu4WroHHNFyjqs9D3BG1SRAn2 success
