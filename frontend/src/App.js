@@ -5,8 +5,6 @@ import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token, MintLayout} from '@solana/spl-token';
 import * as metaplex from '@metaplex/js';
 
-import kp from './kp.json'
-
 const App = () => {
   // State
   const [walletAddress, setWalletAddress] = useState(null);
