@@ -1,46 +1,16 @@
 import { useState, useEffect } from 'react';
-import twitterLogo from './assets/twitter-logo.svg';
+import axios from 'axios';
+import { Connection, clusterApiUrl, Transaction } from '@solana/web3.js';
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token, MintLayout} from '@solana/spl-token';
+import * as metaplex from '@metaplex/js';
 
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
-import { Program, Provider, web3, BN } from '@project-serum/anchor';
-
-import idl from './idl.json';
-import kp from './keypair.json';
-import './App.css';
-
-// Solana runtime
-const { SystemProgram, Keypair } = web3;
-
-// Account that will hold gif data
-const arr = Object.values(kp._keypair.secretKey);
-const secret = new Uint8Array(arr);
-const baseAccount = web3.Keypair.fromSecretKey(secret);
-
-// Program's ID from the idl file
-const programID = new PublicKey(idl.metadata.address);
-
-// Set network to devnet
-const network = clusterApiUrl('devnet');
-
-// Control how we want to acknowledge when the transaction is done
-const opts = {
-  preflightCommitment: 'processed'
-
-}
-
-// Constants
-const TWITTER_HANDLE = '_buildspace';
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-const TEST_GIFS = [
-  'https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp'
-]
+import kp from './kp.json'
 
 const App = () => {
   // State
   const [walletAddress, setWalletAddress] = useState(null);
-  const [inputValue, setInputValue] = useState('');
-  const [tipSize, setTipSize] = useState('');
-  const [gifList, setGifList] = useState([]);
+  const [ownedNFTs, setOwnedNFTs] = useState(null);
 
   // Check if Phantom is connected
   const checkWalletConnection = async () => {
@@ -80,119 +50,120 @@ const App = () => {
     }
   }
 
-  const sendGif = async () => {
-    if (inputValue.length == 0) {
-      console.log('No link given');
-      return
-    }
-    setInputValue('');
-    console.log('Gif link', inputValue);
-    try {
-      const provider = getProvider();
-      const program = new Program(idl, programID, provider);
-
-      await program.rpc.addGif(inputValue, {
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey
-        }
-      })
-      console.log('Gif successfully sent to the program', inputValue);
-
-      await getGifList();
-    } catch (err) {
-      console.log('Error sending GIFs', err);
-    }
-  }
-
-  const vote = (giflink) => async (event) => {
-    try {
-      const provider = getProvider();
-      const program = new Program(idl, programID, provider);
-
-      await program.rpc.updateGif(giflink, {
-        accounts: {
-          baseAccount: baseAccount.publicKey
-        }
-      })
-    } catch (err) {
-      console.log('Error upvoting', err)
-    }
-  }
-
-  const tip = async (item) => {
-    if (tipSize == 0) {
-      console.log('Amount not specified');
-      return
-    }
-    setTipSize('');
-    try {
-      const provider = getProvider();
-      const program = new Program(idl, programID, provider);
-      const to = item.user.toString()
-
-      await program.rpc.sendTip(new BN(parseInt(tipSize)), {
-        accounts: {
-          from: provider.wallet.publicKey,
-          to,
-          systemProgram: SystemProgram.programId
-        }
-      })
-      console.log('Successfully tipped', to)
-    } catch (err) {
-      console.log('Error tipping', err)
-    }
-  }
-
-  const onInputChange = (event) => {
-    const { value } = event.target;
-    setInputValue(value);
-  }
-
-  const onTipChange = (event) => {
-    const { value } = event.target;
-    setTipSize(value);
-  }
-
   const getProvider = () => {
-    const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new Provider(
-      connection, window.solana, opts.preflightCommitment
+    const network = clusterApiUrl('mainnet-beta')
+    const connection = new Connection(network, { preflightCommitment: 'processed' });
+    const provider = new anchor.Provider(
+      connection, window.solana, { preflightCommitment: 'processed' }
     );
+
     return provider;
   }
 
-  const getGifList = async () => {
+  const fetchOwnedNFTs = async () => {
     try {
-      const provider = getProvider();
-      const program = new Program(idl, programID, provider);
-      const account = await program.account.baseAccount.fetch(baseAccount.publicKey)
+      const network = clusterApiUrl('mainnet-beta')
+      const connection = new Connection(network, { preflightCommitment: 'processed' });      
+  
+      const nfts = await metaplex.programs.metadata.Metadata.findDataByOwner(connection, walletAddress);
 
-      console.log('Got the account ', account);
-      setGifList(account.gifList);
+      setOwnedNFTs(nfts)
     } catch (err) {
-      console.log('Error in get GIF list: ', err);
-      setGifList(null);
+      console.log('Error fetching data: ', err);
+      setOwnedNFTs(null)
     }
   }
 
-  const createGifAccount = async () => {
+  const setWalletTransaction = async (instructions) => {
+    const provider = getProvider();
+    const transaction = new Transaction();
+    instructions.forEach(instruction => transaction.add(instruction));
+    transaction.feePayer = provider.wallet.publicKey;
+    let hash = await provider.connection.getRecentBlockhash();
+    console.log("blockhash", hash);
+    transaction.recentBlockhash = hash.blockhash;
+    return transaction;
+  }
+
+  const signAndSend = async (provider, transaction) => {
+    const signedTrans = await provider.wallet.signTransaction(transaction);
+    const signature = await provider.connection.sendRawTransaction(signedTrans.serialize());
+    return signature
+  }
+
+  const sendParrot = async (mintAddress) => {
     try {
+      const network = clusterApiUrl('mainnet-beta')
+      const connection = new Connection(network, { preflightCommitment: 'processed' });  
       const provider = getProvider();
-      const program = new Program(idl, programID, provider);
-      console.log('ping');
-      await program.rpc.startStuffOff({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId
-        },
-        signers: [baseAccount]
-      });
-      console.log('Created a new Base Account w/ address: ', baseAccount.publicKey.toString());
-      await getGifList();
+
+      const owner = new anchor.web3.PublicKey(walletAddress)
+      const receiver = new anchor.web3.PublicKey('5u72NyJ2gvwKfzGg25bgUMzya1b3g889m6C6xTDJrL2V')
+      const mint = new anchor.web3.PublicKey(mintAddress)
+
+      const rent = await connection.getMinimumBalanceForRentExemption(
+        MintLayout.span
+      );
+
+      const fromTokenAccount = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mint,
+        owner
+      )
+
+      const toTokenAccount = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID, 
+        TOKEN_PROGRAM_ID, 
+        mint, 
+        receiver
+      )
+
+      const toTokenAccountInfo = await provider.connection.getAccountInfo(toTokenAccount);
+
+      if (toTokenAccountInfo == null) {
+        const instructions = [
+          Token.createAssociatedTokenAccountInstruction(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_PROGRAM_ID,
+            mint,
+            toTokenAccount,
+            receiver,
+            provider.wallet.publicKey
+          ),
+          Token.createTransferInstruction(
+            TOKEN_PROGRAM_ID,
+            fromTokenAccount,
+            toTokenAccount,
+            owner,
+            [],
+            1
+          )
+        ]
+        
+        const trans = await setWalletTransaction(instructions)
+
+        const signature = await signAndSend(provider, trans)
+
+        let result = await provider.connection.confirmTransaction(signature, "singleGossip");
+        console.log(result)
+      } else {
+        const instruction = Token.createTransferInstruction(
+          TOKEN_PROGRAM_ID,
+          fromTokenAccount,
+          toTokenAccount,
+          owner,
+          [],
+          1
+        )
+
+        const trans = await setWalletTransaction(instruction)
+        const signature = await signAndSend(provider, trans)
+        const result = await provider.connection.confirmTransaction(signature, 'singleGossip')
+      }
+
     } catch (err) {
-      console.log('Error creating Base Account ', err);
+      console.log('Error sending Parrot:', err);
     }
   }
 
@@ -206,61 +177,16 @@ const App = () => {
   )
 
   const renderConnectedContainer = () => {
-    // In case the program's account hasn't been initiated
-    if (gifList == null) {
-      return (
-        <div className='connected-container'>
-          <button className='cta-button submit-gif-button' onClick={createGifAccount}>
-            Do a one-time initialization for GIF program account.
-          </button>
-        </div>
-      )
-    }
-    // Account exists, can submit gifs
-    else {
-      return (
-        <div className='сonnected-container'>
-        <form
-          onSubmit={event => {
-            event.preventDefault();
-            sendGif();
-          }}
-        >
-          <input 
-            type="text" 
-            placeholder="Enter your gif link" 
-            value={inputValue}
-            onChange={onInputChange}
-          />
-          <button type="submit" className="cta-button submit-gif-button">Submit</button>
-        </form>
-        <div className='gif-grid'>
-          {gifList.map((item, index) => (
-            <div className='gif-item' key={index}>
-              <img src={item.gifLink} />
-              <span style={{color:"white"}}>Uploader: {item.user.toString()}</span>
-              <span style={{color:"white"}}>Votes: {item.votes.toString()}</span>
-              <button onClick={vote(item.gifLink.toString())}>Vote</button>
-              <form
-                onSubmit={event => {
-                  event.preventDefault();
-                  tip(item);
-                }}
-              >
-                <input 
-                  type="text" 
-                  placeholder="Lamports to tip" 
-                  value={tipSize}
-                  onChange={onTipChange}
-                />
-                <button type="submit" className="cta-button submit-gif-button">Tip</button>
-              </form>
-            </div>
-          ))}
-        </div>
+    return(
+      <div>
+        {ownedNFTs.map((nft, index) => (
+          <div>
+            <span>{nft.data.name}</span>
+            <button onClick={() => sendParrot(nft.mint)}>Send</button>
+          </div>
+        ))}
       </div>
-      )
-    }
+    )
   }
 
   useEffect(() => {
@@ -273,34 +199,22 @@ const App = () => {
 
   useEffect(() => {
     if (walletAddress) {
-      console.log('Fetching GIF list...');
-      getGifList();
+      console.log('Fetching NFT list...');
+      fetchOwnedNFTs();
     }
   }, [walletAddress])
 
-  return (
+  return(
     <div className="App">
       <div className="container">
         <div className="header-container">
           <p className="header">Parrot Breeder</p>
-          <p className="sub-text">
-            Parrots are horny...
-          </p>
-          {!walletAddress && renderNotConnectedContainer()}
-          {walletAddress && renderConnectedContainer()}
-        </div>
-        <div className="footer-container">
-          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
-          <a
-            className="footer-text"
-            href={TWITTER_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >{`built on @${TWITTER_HANDLE}`}</a>
+            {!walletAddress && renderNotConnectedContainer()}
+            {walletAddress && ownedNFTs && renderConnectedContainer()}
         </div>
       </div>
-    </div>
-  );
-};
+    </div>  
+  )
+}
 
 export default App;
